@@ -2,3 +2,37 @@ print('Hello World');
 
 var first_image = ee.Image('LANDSAT/LT05/C02/T1_L2/LT05_118038_20000606');
 print(first_image);
+
+/*Map.addLayer(first_image, 
+    {
+        bands: ['SR_B4', 'SR_B3', 'SR_B2'], 
+        min: 8000,   
+        max: 17000
+    },
+    'False Color'
+);
+
+Map.centerObject(first_image, 9);
+*/
+var lights93 = ee.Image('NOAA/DMSP-OLS/NIGHTTIME_LIGHTS/F101993').select('stable_lights').rename('1993');
+
+
+var lights03 = ee.Image('NOAA/DMSP-OLS/NIGHTTIME_LIGHTS/F152003')
+    .select('stable_lights').rename('2003');
+
+
+var lights13 = ee.Image('NOAA/DMSP-OLS/NIGHTTIME_LIGHTS/F182013')
+    .select('stable_lights').rename('2013');
+
+var changeImage = lights13.addBands(lights03).addBands(lights93);
+
+print(changeImage)
+
+Map.addLayer(
+  changeImage,
+    {
+      min: 0,
+      max: 63
+    },
+    "Change composite"
+    )
