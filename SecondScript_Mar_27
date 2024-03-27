@@ -4,3 +4,6 @@ var landsat8 = ee.ImageCollection("LANDSAT/LC08/C02/T1");
 var bloomington = ee.Geometry.Point([-86.53, 39.16]);
 
 Map.addLayer(bloomington);
+
+var landsatWinterIN = landsat8.filterDate('2020-12-01', '2021-03-01').filterBounds(bloomington);
+print('Landsat winter size', landsatWinterIN.size());
