@@ -1,4 +1,6 @@
 var landsat8 = ee.ImageCollection("LANDSAT/LC08/C02/T1");
-print('Landsat 8 size', landsat8.size());
+//print('Landsat 8 size', landsat8.size());
 
 var bloomington = ee.Geometry.Point([-86.53, 39.16]);
+
+Map.addLayer(bloomington);
