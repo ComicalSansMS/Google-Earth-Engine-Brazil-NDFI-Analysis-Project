@@ -1,4 +1,4 @@
-var landsat8 = ee.ImageCollection("LANDSAT/LC08/C02/T1");
+var landsat8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_TOA");
 //print('Landsat 8 size', landsat8.size());
 
 var bloomington = ee.Geometry.Point([-86.53, 39.16]);
@@ -7,3 +7,13 @@ Map.addLayer(bloomington);
 
 var landsatWinterIN = landsat8.filterDate('2020-12-01', '2021-03-01').filterBounds(bloomington);
 print('Landsat winter size', landsatWinterIN.size());
+
+//
+var landsatIN = landsat8.filterDate('2021-06-01', '2021-09-01')
+  .filterBounds(bloomington)
+  .filter(ee.Filter.lt('CLOUD_COVER', 50));
+  
+print('Landsat summer size', landsatIN.size());
+
+var median = landsatIN.reduce(ee.Reducer.median());
+print(median)
