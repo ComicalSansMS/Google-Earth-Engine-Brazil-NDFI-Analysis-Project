@@ -1,3 +1,18 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var roi = 
+    /* color: #d63000 */
+    /* shown: false */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[-87.34258768576632, 39.323100473770175],
+          [-87.34258768576632, 38.687074211818704],
+          [-86.18353006857882, 38.687074211818704],
+          [-86.18353006857882, 39.323100473770175]]], null, false);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
 var landsat8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_TOA");
 //print('Landsat 8 size', landsat8.size());
 
@@ -25,4 +40,16 @@ Map.addLayer(median, {
   'Median Composite');
 Map.centerObject(bloomington, 8);
 
-var ndvi = median.normalizedDifference(['B5_median', 'B4_median']).rename('NDVI');
+var ndvi = median.normalizedDifference(['B5_median', 'B4_median']).rename('NDVI').clip(roi);
+print(ndvi);
+
+var visParam =  {
+      min: 0.0,
+      max: 0.9,
+      palette: [
+      'FFFFFF', 'CE7E45', 'DF923D', 'F1B555', 'FCD163', '99B718', '74A901',
+      '66A000', '529400', '3E8601', '207401', '056201', '004C00', '023B01',
+      '012E01', '011D01', '011301']
+    };
+
+Map.addLayer(ndvi, visParam, 'Landsat Composite NDVI');
