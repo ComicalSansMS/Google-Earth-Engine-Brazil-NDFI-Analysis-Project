@@ -26,3 +26,21 @@ var visParam = {
 Map.addLayer(beforeClip, visParam, 'beforeFalse');
 Map.addLayer(afterClip, visParam, 'afterFalse');
 
+
+var nbrBefore = beforeClip.normalizedDifference(['nir', 'swir']);
+var nbrAfter = afterClip.normalizedDifference(['nir', 'swir']);
+
+Map.addLayer(nbrBefore, [], 'NBR Before');
+Map.addLayer(nbrAfter, [], 'NBR After');
+
+var visParams = {
+    palette: [
+    '011959', '0E365E', '1D5561', '3E6C55', '687B3E',
+    '9B882E', 'D59448', 'F9A380', 'FDB7BD', 'FF0000'
+    ],
+    min: -0.2,
+    max: 0.2
+};
+
+
+var nbrDiff = nbrBefore.subtract(nbrAfter);
