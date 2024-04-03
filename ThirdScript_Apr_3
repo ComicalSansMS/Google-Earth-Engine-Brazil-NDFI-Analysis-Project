@@ -22,6 +22,7 @@ var visParam = {
     min: 7000,
     max: 23000
 };
-Map.addLayer(beforeClip, visimParam, 'beforeFalse');
-Map.addLayer(afterClip, visimParam, 'afterFalse');
+
+Map.addLayer(beforeClip, visParam, 'beforeFalse');
+Map.addLayer(afterClip, visParam, 'afterFalse');
 
