@@ -71,3 +71,14 @@ var changeVis = {
 
 Map.addLayer(nbrClass, changeVis, 'NBR classified into burn Severity');
 
+
+
+var cound - nbrClass.reduceRegion({
+  reducer:ee.Reducer.count(),
+  geometry: roi,
+  scale: 30,
+  bestEffort: true
+});
+
+print(count);
+
