@@ -27,11 +27,14 @@ Map.addLayer(beforeClip, visParam, 'beforeFalse');
 Map.addLayer(afterClip, visParam, 'afterFalse');
 
 
-var nbrBefore = beforeClip.normalizedDifference(['nir', 'swir']);
-var nbrAfter = afterClip.normalizedDifference(['nir', 'swir']);
+var nbrBefore = beforeClip.normalizedDifference(['nir', 'swir2']);
+var nbrAfter = afterClip.normalizedDifference(['nir', 'swir2']);
 
 Map.addLayer(nbrBefore, [], 'NBR Before');
 Map.addLayer(nbrAfter, [], 'NBR After');
+
+var nbrDiff = nbrBefore.subtract(nbrAfter);
+
 
 var visParams = {
     palette: [
@@ -42,5 +45,29 @@ var visParams = {
     max: 0.2
 };
 
+Map.addLayer(nbrDiff, visParams, 'nbrChange');
 
-var nbrDiff = nbrBefore.subtract(nbrAfter);
+
+
+
+var nbrThresholdMin = 0.1;
+var nbrThresholdMax = 0.27;
+
+var nbrClass = ee.Image(1).clip(roi);
+
+nbrClass = nbrClass.where(nbrDiff.gte(nbrThresholdMax), 2); 
+nbrClass = nbrClass.where(nbrDiff.lt(nbrThresholdMin), 0);
+
+nbrClass = nbrClass.updateMask(nbrClass);
+
+
+
+var changeVis = {
+    palette: ['green','orange','red'],
+    min: 0,
+    max: 2
+};
+
+
+Map.addLayer(nbrClass, changeVis, 'NBR classified into burn Severity');
+
