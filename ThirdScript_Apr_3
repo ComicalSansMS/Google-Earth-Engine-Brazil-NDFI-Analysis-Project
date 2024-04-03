@@ -11,3 +11,17 @@ var landsat8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_L2")
 Map.centerObject(roi, 11);
 
 var beforeClip = landsat8.filterBounds(roi2).filterDate('2017-10-01', '2017-10-07').sort('CLOUD_COVER', true).first().clip(roi);
+
+var afterClip = landsat8.filterBounds(roi2).filterDate('2017-10-30', '2017-11-10').sort('CLOUD_COVER', true).first().clip(roi);
+
+
+
+
+var visParam = {
+    bands: ['swir1', 'nir', 'green'],
+    min: 7000,
+    max: 23000
+};
+Map.addLayer(beforeClip, visimParam, 'beforeFalse');
+Map.addLayer(afterClip, visimParam, 'afterFalse');
+
