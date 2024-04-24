@@ -1,29 +1,23 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
-    /* color: #98ff00 */
+    /* color: #d63000 */
     /* displayProperties: [
       {
         "type": "rectangle"
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-58.04635729321758, -9.373514978758305],
-          [-58.04635729321758, -10.33685749059806],
-          [-56.50277819165508, -10.33685749059806],
-          [-56.50277819165508, -9.373514978758305]]], null, false);
+        [[[-57.13525547403357, -8.961298786224308],
+          [-57.13525547403357, -9.47098887259698],
+          [-56.15197910684607, -9.47098887259698],
+          [-56.15197910684607, -8.961298786224308]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 var geometry = 
-    /* color: #98ff00 */
-    /* displayProperties: [
-      {
-        "type": "rectangle"
-      }
-    ] */
     ee.Geometry.Polygon(
-        [[[-58.04635729321758, -9.373514978758305],
-          [-58.04635729321758, -10.33685749059806],
-          [-56.50277819165508, -10.33685749059806],
-          [-56.50277819165508, -9.373514978758305]]], null, false);
+        [[[-57.13525547403357, -8.961298786224308],
+          [-57.13525547403357, -9.47098887259698],
+          [-56.15197910684607, -9.47098887259698],
+          [-56.15197910684607, -8.961298786224308]]], null, false);
 var geometry1 =ee.Geometry.Polygon(
         [[[43.90153399536824, -23.282591365883203],
           [43.90153399536824, -23.50945992415811],
@@ -32,7 +26,7 @@ var geometry1 =ee.Geometry.Polygon(
 
 var areaOfstudy =
     geometry;
-
+Map.centerObject(geometry);
 var landsat8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_L2");
 var landsat7 = ee.ImageCollection("LANDSAT/LE07/C02/T1_L2");   
     
