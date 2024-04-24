@@ -164,6 +164,167 @@ Map.addLayer(maskedNDFI, {
     palette: ndfiColors
 }, 'NDFI');
 
-// ------------------------------------------------------------------------
-// CHECKPOINT
-// ------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+// Select two Landsat 5 scenes on which to apply the SMA model.
+
+// Select Landsat bands used for forest change detection. 
+var imageTime0 = median2013
+    .multiply(0.0000275).add(-0.2);
+var bands = ['SR_B2_median', 'SR_B3_median', 'SR_B4_median', 'SR_B5_median', 'SR_B6_median', 'SR_B7_median']
+imageTime0 = imageTime0.select(bands);
+
+// Run the SMA model.
+var smaTime0 = getSMAFractions(imageTime0, endmembers);
+
+// Center the image object.
+Map.centerObject(imageTime0, 10);
+
+// Define the visualization parameters.
+var imageVis = {
+    'opacity': 1,
+    'bands': ['SR_B5median', 'SR_B4median', 'SR_B3median'],
+    'min': 0,
+    'max': 0.4,
+    'gamma': 1
+};
+// Scale to the expected maximum fraction values.
+var fractionVis = {
+    'opacity': 1,
+    'min': 0.0,
+    'max': 0.5
+};
+
+// Add the Landsat color composite to the map.
+Map.addLayer(imageTime0, imageVis, 'Landsat 5 RGB 543', true);
+
+// Add the fraction images to the map.
+Map.addLayer(smaTime0.select('Soil'), fractionVis, 'Soil Fraction');
+Map.addLayer(smaTime0.select('GV'), fractionVis, 'GV Fraction');
+Map.addLayer(smaTime0.select('NPV'), fractionVis, 'NPV Fraction');
+
+function getNDFI(smaImage) {
+    // Calculate the Shade and GV shade-normalized (GVs) fractions 
+    // from the SMA bands.
+    var Shade = smaImage.reduce(ee.Reducer.sum())
+        .subtract(1.0)
+        .abs()
+        .rename('Shade');
+
+    var GVs = smaImage.select('GV')
+        .divide(Shade.subtract(1.0).abs())
+        .rename('GVs');
+
+    // Add the new bands to the SMA image variable.
+    smaImage = smaImage.addBands([Shade, GVs]);
+
+    var ndfi = smaImage.expression(
+        '(GVs - (NPV + Soil))  / (GVs + NPV + Soil)', {
+            'GVs': smaImage.select('GVs'),
+            'NPV': smaImage.select('NPV'),
+            'Soil': smaImage.select('Soil')
+        }
+    ).rename('NDFI');
+
+    return ndfi;
+}
+
+// Create the initial NDFI image and add it to the map.
+var ndfiTime0 = getNDFI(smaTime0);
+Map.addLayer(ndfiTime0,
+    {
+        bands: ['NDFI'],
+        min: -1,
+        max: 1,
+        palette: ndfiColors
+    },
+    'NDFI t0',
+    false);
+
+// Select a second Landsat 5 scene on which to apply the SMA model.
+var imageTime1 = median2023
+    .multiply(0.0000275).add(-0.2)
+    .select(['SR_B2_median', 'SR_B3_median', 'SR_B4_median', 'SR_B5_median', 'SR_B6_median', 'SR_B7_median']);
+var smaTime1 = getSMAFractions(imageTime1, endmembers);
+
+// Create the second NDFI image and add it to the map.
+var ndfiTime1 = getNDFI(smaTime1);
+
+Map.addLayer(imageTime1, imageVis, 'Landsat 5 t1 RGB-5', true);
+Map.addLayer(ndfiTime1,
+    {
+        bands: ['NDFI'],
+        min: -1,
+        max: 1,
+        palette: ndfiColors
+    },
+    'NDFI_t1',
+    false);
+
+// Combine the two NDFI images in a single variable.
+var ndfi = ndfiTime0.select('NDFI')
+    .addBands(ndfiTime1.select('NDFI'))
+    .rename('NDFI_t0', 'NDFI_t1');
+
+// Calculate the NDFI change.
+var ndfiChange = ndfi.select('NDFI_t1')
+    .subtract(ndfi.select('NDFI_t0'))
+    .rename('NDFI Change');
+
+var options = {
+    title: 'NDFI Difference Histogram',
+    fontSize: 20,
+    hAxis: {
+        title: 'Change'
+    },
+    vAxis: {
+        title: 'Frequency'
+    },
+    series: {
+        0: {
+            color: 'green'
+        }
+    }
+};
+
+// Inspect the histogram of the NDFI change image to define threshold
+// values for classification. Make the histogram, set the options.
+var histNDFIChange = ui.Chart.image.histogram(
+        ndfiChange.select('NDFI Change'), region, 30)
+    .setSeriesNames(['NDFI Change'])
+    .setOptions(options);
+
+print(histNDFIChange);
+
+// Classify the NDFI difference image based on thresholds 
+// obtained from its histogram.
+var changeClassification = ndfiChange.expression(
+        '(b(0) >= -0.095 && b(0) <= 0.095) ? 1 :' +
+        //  No forest change
+        '(b(0) >= -0.250 && b(0) <= -0.095) ? 2 :' + // Logging
+        '(b(0) <= -0.250) ? 3 :' + // Deforestation
+        '(b(0) >= 0.095) ? 4  : 0') // Vegetation regrowth
+    .updateMask(ndfi.select('NDFI_t0').gt(
+        0.60)); // mask out no forest
+
+// Use a simple threshold to get forest in the first image date. 
+var forest = ndfi.select('NDFI_t0').gt(0.60);
+
+// Add layers to map
+Map.addLayer(ndfi, {
+    'bands': ['NDFI_t0', 'NDFI_t1', 'NDFI_t1']
+}, 'NDFI Change');
+Map.addLayer(ndfiChange, {}, 'NDFI Difference');
+Map.addLayer(forest, {}, 'Forest t0 ');
+Map.addLayer(changeClassification, {
+        palette: ['000000', '1eaf0c', 'ffc239', 'ff422f',
+            '74fff9']
+    },
+    'Change Classification');
