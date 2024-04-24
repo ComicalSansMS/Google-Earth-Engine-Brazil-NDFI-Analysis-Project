@@ -34,19 +34,20 @@ var landsat8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_L2")
     
     
 var madagascar2013 = landsat8.filterDate('2013-06-01','2013-09-01')
-  .filterBounds(alpharetta)
+  .filterBounds(areaOfstudy)
   .filter(ee.Filter.lt('CLOUD_COVER', 50));    
 
-var median2013 = madagascar2013.reduce(ee.Reducer.median());    
+var median2013 = madagascar2013.reduce(ee.Reducer.median());
+
 var madagascar2023 = landsat8.filterDate('2023-06-01','2023-09-01')
-  .filterBounds(alpharetta)
+  .filterBounds(areaOfstudy)
   .filter(ee.Filter.lt('CLOUD_COVER', 50));    
 var median2023 = madagascar2023.reduce(ee.Reducer.median());    
     
 var mangrove2000 = median2013
 var mangrove2020 = median2023
 
-Map.setCenter(areaofstudy); 
+Map.setCenter(areaOfstudy); 
 // Sets the map center to Conakry, Guinea
 Map.addLayer(areaOfstudy, {}, 'Area of Study');
 Map.addLayer(mangrove2000, {
