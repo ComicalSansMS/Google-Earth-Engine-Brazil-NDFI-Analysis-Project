@@ -119,7 +119,7 @@ var palettes = require(
 var ndfiColors = palettes.ndfiColors;
 
 var imageVis = {
-    'bands': ['SR_B5', 'SR_B4', 'SR_B3'],
+    'bands': ['SR_B5_median', 'SR_B4_median', 'SR_B3_median'],
     'min': 0,
     'max': 0.4
 };
