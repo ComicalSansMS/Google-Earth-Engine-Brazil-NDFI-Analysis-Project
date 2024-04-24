@@ -190,7 +190,7 @@ Map.centerObject(imageTime0, 10);
 // Define the visualization parameters.
 var imageVis = {
     'opacity': 1,
-    'bands': ['SR_B5median', 'SR_B4median', 'SR_B3median'],
+    'bands': ['SR_B5_median', 'SR_B4_median', 'SR_B3_median'],
     'min': 0,
     'max': 0.4,
     'gamma': 1
