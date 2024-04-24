@@ -64,7 +64,7 @@ Map.centerObject(image, 10);
 // Define and select the Landsat bands to apply the SMA model.
 // use ['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B7'] for Landsat 5 and 7.
 // use ['SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B6', 'SR_B7'] for Landsat 8.
-var bands = ['SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B6', 'SR_B7']
+var bands = ['SR_B2_median', 'SR_B3_median', 'SR_B4_median', 'SR_B5_median', 'SR_B6_median', 'SR_B7_median']
 image = image.select(bands);
 
 // Unmixing image using Singular Value Decomposition. 
