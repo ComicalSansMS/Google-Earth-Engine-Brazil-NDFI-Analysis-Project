@@ -14,8 +14,18 @@ var geometry =
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 // STEP 1 - ADD THE MAPS
-var areaOfstudy = ee.FeatureCollection(
-    'projects/gee-book/assets/A3-3/Border5km');
+var areaOfstudy =
+    /* color: #d63000 */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[43.74772540161824, -23.388511722319535],
+          [43.74772540161824, -23.61519859191863],
+          [44.24760333130574, -23.61519859191863],
+          [44.24760333130574, -23.388511722319535]]], null, false);
 var mangrove2000 = ee.Image(
     'projects/gee-book/assets/A3-3/MangroveGuinea2000_v2');
 var mangrove2020 = ee.Image(
