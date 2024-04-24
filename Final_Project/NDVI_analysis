@@ -33,8 +33,8 @@ var endmembers = [
 ];
 
 // Select a Landsat 5 scene on which to apply the SMA model.
-var image = median2010.multiply(0.0000275).add(-0.2) 
-print(median2010)
+var image = median2010.multiply(0.0000275).add(-0.2); 
+print(median2010);
 
 
     
@@ -43,122 +43,122 @@ print(median2010)
 // Center the map on the image object.
 Map.centerObject(areaOfstudy, 10);
 
-// // Define and select the Landsat bands to apply the SMA model.
-// // use ['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B7'] for Landsat 5 and 7.
-// // use ['SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B6', 'SR_B7'] for Landsat 8.
-// var bands = ['SR_B1_median', 'SR_B2_median', 'SR_B3_median', 'SR_B4_median', 'SR_B5_median', 'SR_B7_median']
-// image = image.select(bands);
+// Define and select the Landsat bands to apply the SMA model.
+// use ['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B7'] for Landsat 5 and 7.
+// use ['SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B6', 'SR_B7'] for Landsat 8.
+var bands = ['SR_B1_median', 'SR_B2_median', 'SR_B3_median', 'SR_B4_median', 'SR_B5_median', 'SR_B7_median']
+image = image.select(bands);
 
-// // Unmixing image using Singular Value Decomposition. 
-// var getSMAFractions = function(image, endmembers) {
-//     var unmixed = ee.Image(image)
-//         .select([0, 1, 2, 3, 4,
-//         5]) // Use the visible, NIR, and SWIR bands only!
-//         .unmix(endmembers)
-//         .max(0) // Remove negative fractions, mostly Soil.
-//         .rename('GV', 'NPV', 'Soil', 'Cloud');
-//     return ee.Image(unmixed.copyProperties(image));
-// };
+// Unmixing image using Singular Value Decomposition. 
+var getSMAFractions = function(image, endmembers) {
+    var unmixed = ee.Image(image)
+        .select([0, 1, 2, 3, 4,
+        5]) // Use the visible, NIR, and SWIR bands only!
+        .unmix(endmembers)
+        .max(0) // Remove negative fractions, mostly Soil.
+        .rename('GV', 'NPV', 'Soil', 'Cloud');
+    return ee.Image(unmixed.copyProperties(image));
+};
 
-// // Calculate GVS and NDFI and add them to image fractions.
-// // Run the SMA model passing the Landsat image and the endmembers.
-// var sma = getSMAFractions(image, endmembers);
+// Calculate GVS and NDFI and add them to image fractions.
+// Run the SMA model passing the Landsat image and the endmembers.
+var sma = getSMAFractions(image, endmembers);
 
-// Map.addLayer(sma, {
-//     bands: ['NPV', 'GV', 'Soil'],
-//     min: 0,
-//     max: 0.45
-// }, 'sma');
+Map.addLayer(sma, {
+    bands: ['NPV', 'GV', 'Soil'],
+    min: 0,
+    max: 0.45
+}, 'sma');
 
-// // Calculate the Shade and GV shade-normalized (GVs) fractions from the SMA bands.
-// var Shade = sma.reduce(ee.Reducer.sum())
-//     .subtract(1.0)
-//     .abs()
-//     .rename('Shade');
+// Calculate the Shade and GV shade-normalized (GVs) fractions from the SMA bands.
+var Shade = sma.reduce(ee.Reducer.sum())
+    .subtract(1.0)
+    .abs()
+    .rename('Shade');
 
-// var GVs = sma.select('GV')
-//     .divide(Shade.subtract(1.0).abs())
-//     .rename('GVs');
+var GVs = sma.select('GV')
+    .divide(Shade.subtract(1.0).abs())
+    .rename('GVs');
 
-// // Add the new bands to the SMA image variable.
-// sma = sma.addBands([Shade, GVs]);
+// Add the new bands to the SMA image variable.
+sma = sma.addBands([Shade, GVs]);
 
-// // Calculate the NDFI using image expression.	
-// var NDFI = sma.expression(
-//     '(GVs - (NPV + Soil))  / (GVs + NPV + Soil)', {
-//         'GVs': sma.select('GVs'),
-//         'NPV': sma.select('NPV'),
-//         'Soil': sma.select('Soil')
-//     }).rename('NDFI');
+// Calculate the NDFI using image expression.	
+var NDFI = sma.expression(
+    '(GVs - (NPV + Soil))  / (GVs + NPV + Soil)', {
+        'GVs': sma.select('GVs'),
+        'NPV': sma.select('NPV'),
+        'Soil': sma.select('Soil')
+    }).rename('NDFI');
 
-// // Add the NDFI band to the SMA image.
-// sma = sma.addBands(NDFI);
+// Add the NDFI band to the SMA image.
+sma = sma.addBands(NDFI);
 
-// // Define NDFI color table.
-// var palettes = require(
-//     'projects/gee-edu/book:Part A - Applications/A3 - Terrestrial Applications/A3.4 Forest Degradation and Deforestation/modules/palettes'
-// );
-// var ndfiColors = palettes.ndfiColors;
+// Define NDFI color table.
+var palettes = require(
+    'projects/gee-edu/book:Part A - Applications/A3 - Terrestrial Applications/A3.4 Forest Degradation and Deforestation/modules/palettes'
+);
+var ndfiColors = palettes.ndfiColors;
 
-// var imageVis = {
-//     'bands': ['SR_B5_median', 'SR_B4_median', 'SR_B3_median'],
-//     'min': 0,
-//     'max': 0.4
-// };
+var imageVis = {
+    'bands': ['SR_B5_median', 'SR_B4_median', 'SR_B3_median'],
+    'min': 0,
+    'max': 0.4
+};
 
-// // Add the Landsat color composite to the map.
-// Map.addLayer(image, imageVis, 'Landsat 5 RGB-543', true);
+// Add the Landsat color composite to the map.
+Map.addLayer(image, imageVis, 'Landsat 5 RGB-543', true);
 
-// // Add the fraction images to the map.
-// Map.addLayer(sma.select('Soil'), {
-//     min: 0,
-//     max: 0.2
-// }, 'Soil');
-// Map.addLayer(sma.select('GV'), {
-//     min: 0,
-//     max: 0.6
-// }, 'GV');
-// Map.addLayer(sma.select('NPV'), {
-//     min: 0,
-//     max: 0.2
-// }, 'NPV');
-// Map.addLayer(sma.select('Shade'), {
-//     min: 0,
-//     max: 0.8
-// }, 'Shade');
-// Map.addLayer(sma.select('GVs'), {
-//     min: 0,
-//     max: 0.9
-// }, 'GVs');
-// Map.addLayer(sma.select('NDFI'), {
-//     palette: ndfiColors
-// }, 'NDFI');
+// Add the fraction images to the map.
+Map.addLayer(sma.select('Soil'), {
+    min: 0,
+    max: 0.2
+}, 'Soil');
+Map.addLayer(sma.select('GV'), {
+    min: 0,
+    max: 0.6
+}, 'GV');
+Map.addLayer(sma.select('NPV'), {
+    min: 0,
+    max: 0.2
+}, 'NPV');
+Map.addLayer(sma.select('Shade'), {
+    min: 0,
+    max: 0.8
+}, 'Shade');
+Map.addLayer(sma.select('GVs'), {
+    min: 0,
+    max: 0.9
+}, 'GVs');
+Map.addLayer(sma.select('NDFI'), {
+    palette: ndfiColors
+}, 'NDFI');
 
-// var getWaterMask = function(sma) {
-//     var waterMask = (sma.select('Shade').gte(0.65))
-//         .and(sma.select('GV').lte(0.15))
-//         .and(sma.select('Soil').lte(0.05));
-//     return waterMask.rename('Water');
-// };
+var getWaterMask = function(sma) {
+    var waterMask = (sma.select('Shade').gte(0.65))
+        .and(sma.select('GV').lte(0.15))
+        .and(sma.select('Soil').lte(0.05));
+    return waterMask.rename('Water');
+};
 
-// // You can use the variable below to get the cloud mask.
-// var cloud = sma.select('Cloud').gte(0.1);
-// var water = getWaterMask(sma);
+// You can use the variable below to get the cloud mask.
+var cloud = sma.select('Cloud').gte(0.1);
+var water = getWaterMask(sma);
 
-// var cloudWaterMask = cloud.max(water);
-// Map.addLayer(cloudWaterMask.selfMask(),
-//     {
-//         min: 1,
-//         max: 1,
-//         palette: 'blue'
-//     },
-//     'Cloud and water mask');
+var cloudWaterMask = cloud.max(water);
+Map.addLayer(cloudWaterMask.selfMask(),
+    {
+        min: 1,
+        max: 1,
+        palette: 'blue'
+    },
+    'Cloud and water mask');
 
-// // Mask NDFI.
-// var maskedNDFI = sma.select('NDFI').updateMask(cloudWaterMask.not());
-// Map.addLayer(maskedNDFI, {
-//     palette: ndfiColors
-// }, 'NDFI');
+// Mask NDFI.
+var maskedNDFI = sma.select('NDFI').updateMask(cloudWaterMask.not());
+Map.addLayer(maskedNDFI, {
+    palette: ndfiColors
+}, 'NDFI');
 
 
 
