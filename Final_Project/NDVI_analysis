@@ -10,7 +10,7 @@ var areaOfstudy =
 var landsat8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_L2");
 var landsat7 = ee.ImageCollection("LANDSAT/LE07/C02/T1_L2");   
     
-var madagascar2000 = landsat7.filterDate('200-06-01','2000-09-01')
+var madagascar2000 = landsat7.filterDate('2000-06-01','2000-09-01')
   .filterBounds(areaOfstudy)
   .filter(ee.Filter.lt('CLOUD_COVER', 50));    
 
@@ -33,8 +33,8 @@ var endmembers = [
 ];
 
 // Select a Landsat 5 scene on which to apply the SMA model.
-var image = median2000.multiply(0.0000275).add(-0.2) 
-print(median2000)
+var image = median2010.multiply(0.0000275).add(-0.2) 
+print(median2010)
 
 
     
