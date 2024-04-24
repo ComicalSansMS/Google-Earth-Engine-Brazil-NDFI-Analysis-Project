@@ -33,8 +33,13 @@ var landsat8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_L2")
     ['blue','green', 'red', 'nir', 'swir1','swir2']);
     
     
+var madagascar2013 = landsat8.filterDate('2013-06-01','2013-09-01')
+  .filterBounds(alpharetta)
+  .filter(ee.Filter.lt('CLOUD_COVER', 50));    
     
-    
+var madagascar2023 = landsat8.filterDate('2023-06-01','2023-09-01')
+  .filterBounds(alpharetta)
+  .filter(ee.Filter.lt('CLOUD_COVER', 50));    
     
     
 var mangrove2000 = ee.Image(
