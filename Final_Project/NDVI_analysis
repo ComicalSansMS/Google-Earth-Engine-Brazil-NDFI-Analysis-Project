@@ -50,6 +50,11 @@ var endmembers = [
 var image = median2013 
 print(median2013)
 
+var image2 = ee.Image('LANDSAT/LT05/C02/T1_L2/LT05_226068_19840411')
+    .multiply(0.0000275).add(-0.2);
+    
+print(image2);    
+
 //ee.Image('LANDSAT/LT05/C02/T1_L2/LT05_226068_19840411')
 //    .multiply(0.0000275).add(-0.2);
 
