@@ -1,27 +1,31 @@
-/**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = /* color: #d63000 */ee.Geometry.Polygon(
+
+var geometry = 
+    ee.Geometry.Polygon(
+        [[[-56.553612555475965, -9.770618844145462],
+          [-56.553612555475965, -10.975549937405846],
+          [-54.499169196100965, -10.975549937405846],
+          [-54.499169196100965, -9.770618844145462]]], null, false);
+var geometry1 =ee.Geometry.Polygon(
         [[[43.90153399536824, -23.282591365883203],
           [43.90153399536824, -23.50945992415811],
           [44.40141192505574, -23.50945992415811],
           [44.40141192505574, -23.282591365883203]]], null, false);
-/***** End of imports. If edited, may not auto-convert in the playground. *****/
 
-// STEP 1 - ADD THE MAPS
 var areaOfstudy =
     geometry;
 
 var landsat8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_L2");
 var landsat7 = ee.ImageCollection("LANDSAT/LE07/C02/T1_L2");   
     
-var madagascar2000 = landsat7.filterDate('2000-06-01','2000-09-01')
+var madagascar2000 = landsat7.filterDate('2000-06-01','2000-12-01')
   .filterBounds(areaOfstudy)
-  .filter(ee.Filter.lt('CLOUD_COVER', 50));    
+  .filter(ee.Filter.lt('CLOUD_COVER', 25));    
 
 var median2000 = madagascar2000.reduce(ee.Reducer.median());
 
-var madagascar2023 = landsat8.filterDate('2023-06-01','2023-09-01')
+var madagascar2023 = landsat8.filterDate('2023-06-01','2023-12-01')
   .filterBounds(areaOfstudy)
-  .filter(ee.Filter.lt('CLOUD_COVER', 50));    
+  .filter(ee.Filter.lt('CLOUD_COVER', 25));    
 var median2023 = madagascar2023.reduce(ee.Reducer.median());    
 
 
