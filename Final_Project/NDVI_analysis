@@ -7,19 +7,19 @@ var areaOfstudy =
           [44.24760333130574, -23.61519859191863],
           [44.24760333130574, -23.388511722319535]]], null, false);
           
-var landsat8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_L2")
+var landsat8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_L2");
+var landsat7 = ee.ImageCollection("LANDSAT/LE07/C02/T1_L2");   
     
-    
-var madagascar2013 = landsat8.filterDate('2013-06-01','2013-09-01')
+var madagascar2000 = landsat7.filterDate('200-06-01','2000-09-01')
   .filterBounds(areaOfstudy)
   .filter(ee.Filter.lt('CLOUD_COVER', 50));    
 
-var median2013 = madagascar2013.reduce(ee.Reducer.median());
+var median2013 = madagascar2000.reduce(ee.Reducer.median());
 
-var madagascar2023 = landsat8.filterDate('2023-06-01','2023-09-01')
+var madagascar2010 = landsat7.filterDate('2010-06-01','2010-09-01')
   .filterBounds(areaOfstudy)
   .filter(ee.Filter.lt('CLOUD_COVER', 50));    
-var median2023 = madagascar2023.reduce(ee.Reducer.median());    
+var median2010 = madagascar2010.reduce(ee.Reducer.median());    
 
 
 
@@ -33,16 +33,12 @@ var endmembers = [
 ];
 
 // Select a Landsat 5 scene on which to apply the SMA model.
-var image = median2013.multiply(0.0000275).add(-0.2) 
-print(median2013)
+var image = median2000.multiply(0.0000275).add(-0.2) 
+print(median2000)
 
-var image2 = ee.Image('LANDSAT/LT05/C02/T1_L2/LT05_226068_19840411')
-    .multiply(0.0000275).add(-0.2);
+
     
-print(image2);    
-
-//ee.Image('LANDSAT/LT05/C02/T1_L2/LT05_226068_19840411')
-//    .multiply(0.0000275).add(-0.2);
+    
 
 // Center the map on the image object.
 Map.centerObject(image, 10);
@@ -297,7 +293,7 @@ var options = {
 // Inspect the histogram of the NDFI change image to define threshold
 // values for classification. Make the histogram, set the options.
 var histNDFIChange = ui.Chart.image.histogram(
-        ndfiChange.select('NDFI Change'), region, 30)
+        ndfiChange.select('NDFI Change'), areaOfstudy, 30)
     .setSeriesNames(['NDFI Change'])
     .setOptions(options);
 
