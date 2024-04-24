@@ -47,7 +47,7 @@ var endmembers = [
 ];
 
 // Select a Landsat 5 scene on which to apply the SMA model.
-var image = median2013 
+var image = median2013.multiply(0.0000275).add(-0.2) 
 print(median2013)
 
 var image2 = ee.Image('LANDSAT/LT05/C02/T1_L2/LT05_226068_19840411')
@@ -64,7 +64,7 @@ Map.centerObject(image, 10);
 // Define and select the Landsat bands to apply the SMA model.
 // use ['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B7'] for Landsat 5 and 7.
 // use ['SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B6', 'SR_B7'] for Landsat 8.
-var bands = ['SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B6', 'SR_B7'];
+var bands = ['SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B6', 'SR_B7']
 image = image.select(bands);
 
 // Unmixing image using Singular Value Decomposition. 
