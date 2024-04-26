@@ -5,7 +5,7 @@ var geometry = ee.Geometry.Polygon(
           [-56.95398105997107, -9.860881050542597]]], null, false);
 
 var areaOfstudy = geometry;
-Map.setCenter(-57.45, -10.12, 10);
+Map.setCenter(-57.45, -10.12, 9);
 
 var landsat8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_L2");
 var landsat7 = ee.ImageCollection("LANDSAT/LE07/C02/T1_L2");   
@@ -177,8 +177,6 @@ imageTime0 = imageTime0.select(bands);
 // Run the SMA model.
 var smaTime0 = getSMAFractions(imageTime0, endmembers);
 
-// Center the image object.
-Map.centerObject(imageTime0, 10);
 
 // Define the visualization parameters.
 var imageVis_t0 = {
