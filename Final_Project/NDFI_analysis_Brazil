@@ -1,26 +1,12 @@
-/**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = 
-    /* color: #d63000 */
-    /* displayProperties: [
-      {
-        "type": "rectangle"
-      }
-    ] */
-    ee.Geometry.Polygon(
-        [[[-57.93725742715857, -9.860881050542597],
-          [-57.93725742715857, -10.369211004375286],
-          [-56.95398105997107, -10.369211004375286],
-          [-56.95398105997107, -9.860881050542597]]], null, false);
-/***** End of imports. If edited, may not auto-convert in the playground. *****/
 var geometry = ee.Geometry.Polygon(
         [[[-57.93725742715857, -9.860881050542597],
           [-57.93725742715857, -10.369211004375286],
           [-56.95398105997107, -10.369211004375286],
           [-56.95398105997107, -9.860881050542597]]], null, false);
 
-var areaOfstudy =
-    geometry;
-Map.centerObject(geometry);
+var areaOfstudy = geometry;
+Map.setCenter(-57.45, -10.12, 10);
+
 var landsat8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_L2");
 var landsat7 = ee.ImageCollection("LANDSAT/LE07/C02/T1_L2");   
     
@@ -54,8 +40,6 @@ print(median2023);
     
     
 
-// Center the map on the image object.
-Map.centerObject(areaOfstudy, 10);
 
 // Define and select the Landsat bands to apply the SMA model.
 // use ['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B7'] for Landsat 5 and 7.
