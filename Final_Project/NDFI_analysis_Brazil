@@ -34,16 +34,16 @@ Map.setCenter(-57.45, -10.12, 9);
 var landsat8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_L2");
 var landsat7 = ee.ImageCollection("LANDSAT/LE07/C02/T1_L2");   
     
-var madagascar2000 = landsat7.filterDate('2000-06-01','2000-9-01')
+var brazi2000 = landsat7.filterDate('2000-06-01','2000-9-01')
   .filterBounds(areaOfstudy)
   .filter(ee.Filter.lt('CLOUD_COVER', 5));    
 
-var median2000 = madagascar2000.reduce(ee.Reducer.median()).clip(roi);
+var median2000 = brazil2000.reduce(ee.Reducer.median()).clip(roi);
 
-var madagascar2023 = landsat8.filterDate('2023-06-01','2023-9-01')
+var brazil2023 = landsat8.filterDate('2023-06-01','2023-9-01')
   .filterBounds(areaOfstudy)
   .filter(ee.Filter.lt('CLOUD_COVER', 5));    
-var median2023 = madagascar2023.reduce(ee.Reducer.median()).clip(roi);    
+var median2023 = brazil2023.reduce(ee.Reducer.median()).clip(roi);    
 
 
 
